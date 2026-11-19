@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - feat/milestone-1-figma-v3-homepage
+      - feat/milestone-2a-services
   pull_request:
     branches:
       - main
+      - feat/milestone-1-figma-v3-homepage
 
 jobs:
   build:
