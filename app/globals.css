@@ -1,0 +1,5 @@
+@tailwind base;@tailwind components;@tailwind utilities;
+/* TODO: replace these placeholder tokens with the exact Figma colours */
+:root{--ink:#0b0b0b;--paper:#f4f1ea;--accent:#ff4d1c}
+html.lenis,html.lenis body{height:auto}
+body{background:var(--ink);color:var(--paper)}
