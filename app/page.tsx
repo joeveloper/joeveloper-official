@@ -1,432 +1,332 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
 
-const L = ({ children }: { children: React.ReactNode }) => (
-  <span className="block overflow-hidden">
-    <span data-line className="block">
-      {children}
-    </span>
-  </span>
-);
-const big =
-  "font-semibold uppercase tracking-tight leading-[0.85] text-[clamp(3.5rem,13vw,11rem)]";
-const h2 =
-  "font-semibold tracking-tight leading-none text-[clamp(2.5rem,6vw,5rem)]";
-const eyebrow = "text-[11px] tracking-[0.2em] uppercase opacity-70";
-const pad = "px-6 md:px-[75px]";
+import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 const services = [
-  "AI & Automation",
-  "Digital Products & Engineering",
-  "Brand, Web & Growth",
-  "Training & Digital Enablement",
+  {
+    number: "01",
+    title: "AI & Automation",
+    description: "Better workflows, better decisions, and practical AI adoption.",
+    subject: "AI and automation consultation",
+  },
+  {
+    number: "02",
+    title: "Digital Products & Engineering",
+    description: "Thoughtful software, modern platforms, and connected systems.",
+    subject: "Software development consultation",
+  },
+  {
+    number: "03",
+    title: "Brand, Web & Growth",
+    description: "Digital identities and experiences that help ambitious brands grow.",
+    subject: "Digital presence and growth consultation",
+  },
+  {
+    number: "04",
+    title: "Training & Digital Enablement",
+    description: "Give teams the confidence and skills to work differently.",
+    subject: "Digital transformation training consultation",
+  },
 ];
-const links = [
-  "Home",
-  "Services",
-  "Industries",
-  "Products",
-  "Insights",
-  "About",
-  "Contact",
+
+const navigation = [
+  { label: "Home", href: "#home" },
+  { label: "Services", href: "#services" },
+  { label: "Industries", href: "#industries" },
+  { label: "Products", href: "#products" },
+  { label: "Insights", href: "#insights" },
+  { label: "About", href: "#about" },
+  { label: "Contact", href: "#contact" },
 ];
-const Placeholder = ({
-  label,
-  className,
-}: {
-  label: string;
-  className: string;
-}) => (
-  <div className={`relative overflow-hidden bg-neutral-800 ${className}`}>
-    <div
-      data-parallax
-      className="absolute inset-[-10%] grid place-items-center bg-gradient-to-br from-neutral-700 to-neutral-900 text-xs uppercase tracking-widest opacity-60"
-    >
-      {label}
-    </div>
-  </div>
-);
+
+const industries = ["Public sector", "Education", "Aviation & mobility", "Growing businesses"];
+const email = "hello@joeveloper.com";
+const consultationLink = "mailto:" + email + "?subject=" + encodeURIComponent("Digital transformation consultation");
+const heroVideo = process.env.NEXT_PUBLIC_HERO_VIDEO_URL;
+
+function Arrow({ className = "" }: { className?: string }) {
+  return <span aria-hidden="true" className={className}>↗</span>;
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <p className="eyebrow text-electric">{children}</p>;
+}
 
 export default function Home() {
-  const root = useRef<HTMLDivElement>(null);
-  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const menuRef = useRef<HTMLElement>(null);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    document.documentElement.style.overflow = open ? "hidden" : "";
-  }, [open]);
-
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    const lenis = new Lenis();
-    lenis.on("scroll", ScrollTrigger.update);
-    const tick = (t: number) => lenis.raf(t * 1000);
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
-    const mm = gsap.matchMedia();
-    mm.add(
-      "(prefers-reduced-motion: no-preference)",
-      () => {
-        const q = gsap.utils.selector(root);
-        // Headline masked line reveals (hero, section titles, contact)
-        q("[data-lines]").forEach((el) =>
-          gsap.from(el.querySelectorAll("[data-line]"), {
-            yPercent: 110,
-            duration: 1.1,
-            ease: "power4.out",
-            stagger: 0.12,
-            scrollTrigger: { trigger: el, start: "top 85%" },
-          }),
-        );
-        // Statement: scroll-scrubbed word reveal
-        q("[data-scrub]").forEach((el) =>
-          gsap.fromTo(
-            el.querySelectorAll("[data-word]"),
-            { opacity: 0.15 },
-            {
-              opacity: 1,
-              stagger: 0.1,
-              ease: "none",
-              scrollTrigger: {
-                trigger: el,
-                start: "top 75%",
-                end: "bottom 50%",
-                scrub: true,
-              },
-            },
-          ),
-        );
-        // Divider rules draw in
-        q("[data-rule]").forEach((el) =>
-          gsap.from(el, {
-            scaleX: 0,
-            transformOrigin: "left",
-            duration: 1.2,
-            ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 90%" },
-          }),
-        );
-        // Staggered rows / blocks
-        q("[data-rows]").forEach((el) =>
-          gsap.from(el.querySelectorAll("[data-row]"), {
-            y: 30,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power3.out",
-            stagger: 0.12,
-            scrollTrigger: { trigger: el, start: "top 80%" },
-          }),
-        );
-        // Image clip-path wipe
-        q("[data-clip]").forEach((el) =>
-          gsap.fromTo(
-            el,
-            { clipPath: "inset(0 100% 0 0)" },
-            {
-              clipPath: "inset(0 0% 0 0)",
-              duration: 1.3,
-              ease: "power4.inOut",
-              scrollTrigger: { trigger: el, start: "top 80%" },
-            },
-          ),
-        );
-        // Parallax inside image frames
-        q("[data-parallax]").forEach((el) =>
-          gsap.fromTo(
-            el,
-            { yPercent: -8 },
-            {
-              yPercent: 8,
-              ease: "none",
-              scrollTrigger: { trigger: el.parentElement, scrub: true },
-            },
-          ),
-        );
-        // Header hides on scroll down, returns on scroll up
-        ScrollTrigger.create({
-          start: 0,
-          end: "max",
-          onUpdate: (s) =>
-            gsap.to("#hdr", {
-              yPercent: s.direction === 1 && s.scroll() > 200 ? -100 : 0,
-              duration: 0.4,
-              overwrite: true,
-            }),
-        });
-      },
-      root,
-    );
-    return () => {
-      mm.revert();
-      gsap.ticker.remove(tick);
-      lenis.destroy();
-    };
+  const closeMenu = useCallback(() => {
+    setMenuOpen(false);
+    window.requestAnimationFrame(() => menuButton.current?.focus());
   }, []);
 
-  const words = (s: string) =>
-    s.split(" ").map((w, i) => (
-      <span key={i} data-word>
-        {w}{" "}
-      </span>
-    ));
+  useEffect(() => {
+    if (!menuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButton.current?.focus();
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMenu();
+      }
+      if (event.key !== "Tab" || !menuRef.current) return;
+
+      const focusable = Array.from(
+        menuRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => el.getClientRects().length > 0);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [menuOpen, closeMenu]);
 
   return (
-    <div ref={root}>
-      <header
-        id="hdr"
-        className={`fixed inset-x-0 top-0 z-40 flex h-[100px] items-center justify-between ${pad}`}
-      >
-        <a href="#" className="text-3xl font-semibold tracking-tight">
-          joeveloper®
+    <>
+      <a href="#main" className="skip-link">Skip to content</a>
+      <header className="site-header">
+        <a className="wordmark" href="#home" aria-label="Joeveloper home">
+          joeveloper<span className="trademark">®</span>
         </a>
-        <span className={`hidden md:block ${eyebrow}`}>
-          Digital Transformation / AI / Technology
-        </span>
+        <span className="header-caption">DIGITAL TRANSFORMATION / AI / TECHNOLOGY</span>
         <button
-          onClick={() => setOpen(true)}
-          className="group px-4 py-3 text-sm font-medium uppercase tracking-widest"
+          ref={menuButton}
+          type="button"
+          className="menu-trigger"
+          aria-controls="site-menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(true)}
         >
-          Menu{" "}
-          <span className="inline-block transition-transform duration-300 group-hover:rotate-90">
-            +
-          </span>
+          MENU <span aria-hidden="true">+</span>
         </button>
       </header>
 
-      {/* Menu overlay */}
       <nav
-        aria-hidden={!open}
-        className={`fixed inset-0 z-50 bg-ink transition-transform duration-700 [transition-timing-function:cubic-bezier(.76,0,.24,1)] ${open ? "translate-y-0" : "-translate-y-full"}`}
+        ref={menuRef}
+        id="site-menu"
+        aria-label="Main navigation"
+        aria-hidden={!menuOpen}
+        className={menuOpen ? "menu-overlay is-open" : "menu-overlay"}
+        inert={!menuOpen}
       >
-        <div className={`flex h-[100px] items-center justify-between ${pad}`}>
-          <span className="text-3xl font-semibold tracking-tight">
-            joeveloper®
-          </span>
-          <button
-            onClick={() => setOpen(false)}
-            className="px-4 py-3 text-sm font-medium uppercase tracking-widest"
-          >
-            Close ×
+        <div className="menu-top container-wide">
+          <span className="wordmark">joeveloper<span className="trademark">®</span></span>
+          <span className="menu-top-label">EXPLORE</span>
+          <button ref={closeButton} type="button" className="close-trigger" onClick={closeMenu}>
+            CLOSE <span aria-hidden="true">×</span>
           </button>
         </div>
-        <ul className={`grid gap-x-12 md:grid-cols-2 ${pad} pt-8`}>
-          {links.map((l, i) => (
-            <li
-              key={l}
-              style={{ transitionDelay: open ? `${300 + i * 70}ms` : "0ms" }}
-              className={`border-t border-white/20 transition-all duration-700 ${open ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}
+        <div className="menu-content container-wide">
+          {navigation.map((item) => (
+            <a
+              key={item.href}
+              href={item.href}
+              className="menu-link"
+              onClick={closeMenu}
             >
-              <a
-                href={`#${l.toLowerCase()}`}
-                onClick={() => setOpen(false)}
-                className="group flex items-center justify-between py-4 text-4xl font-semibold tracking-tight md:text-6xl"
-              >
-                <span className="transition-transform duration-300 group-hover:translate-x-4">
-                  {l}
-                </span>
-                <span className="text-3xl transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
-                  ↗
-                </span>
-              </a>
-            </li>
+              <span>{item.label}</span><Arrow />
+            </a>
           ))}
-        </ul>
+        </div>
+        <div className="menu-bottom container-wide">
+          <span>LAGOS / PARIS / GLOBAL</span>
+          <a href={consultationLink} onClick={closeMenu}>START A CONVERSATION <Arrow /></a>
+        </div>
       </nav>
 
-      <main>
-        {/* Hero — replace placeholder with a 12–18s seamless muted loop <video> + poster */}
-        <section
-          id="home"
-          className="relative flex min-h-[800px] items-end overflow-hidden pb-24 pt-[200px]"
-        >
-          {/* <Placeholder label="Hero video poster" className="absolute inset-0" /> */}
-          {/* <video
-            autoPlay
-            muted
-            loop
-            className="absolute inset-0 h-full w-full object-cover"
-          >
-            <source src="/path-to-your-video.mp4" type="video/mp4" />
-          </video> */}
-          <img
+      <main id="main">
+        <section id="home" className="hero" aria-labelledby="hero-title">
+          <Image
             src="/images/hero.png"
-            alt="Hero video poster"
-            className="absolute inset-0 h-full w-full object-cover"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            quality={85}
+            className="hero-background"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/70 to-transparent" />
-          <div className={`relative ${pad}`}>
-            <p className={`${eyebrow} mb-8`}>
-              Transformation / Technology / People
-            </p>
-            <h1 data-lines className={big}>
-              <L>We make</L>
-              <L>technology</L>
-              <L>work.</L>
-            </h1>
-            <p className="mt-10 max-w-xl text-lg opacity-80">
-              We transform processes, products and possibilities through AI,
-              software and digital expertise.
-            </p>
-            <a
-              href="#services"
-              className="group mt-8 inline-block text-sm font-medium uppercase tracking-widest"
+          {heroVideo && !videoFailed && (
+            <video
+              className="hero-video"
+              autoPlay
+              loop
+              muted
+              playsInline
+              aria-hidden="true"
+              poster="/images/hero.png"
+              onError={() => setVideoFailed(true)}
             >
-              <span className="border-b border-transparent pb-1 transition-colors group-hover:border-paper">
-                Discover Joeveloper
-              </span>
-              <span className="ml-2 inline-block transition-transform group-hover:-translate-y-1 group-hover:translate-x-1">
-                ↗
-              </span>
+              <source src={heroVideo} type="video/mp4" />
+            </video>
+          )}
+          <div className="hero-shade" />
+          <div className="hero-inner container-wide">
+            <p className="eyebrow hero-eyebrow">TRANSFORMATION / TECHNOLOGY / PEOPLE</p>
+            <h1 id="hero-title" className="hero-title">
+              <span>WE MAKE</span>
+              <span>TECHNOLOGY</span>
+              <span className="text-electric">WORK.</span>
+            </h1>
+            <p className="hero-summary">
+              We help ambitious organizations transform how they operate, compete and grow
+              through AI, software and digital expertise.
+            </p>
+            <a href="#services" className="text-link light-link">
+              DISCOVER JOEVELOPER <Arrow />
             </a>
           </div>
-        </section>
-
-        {/* Statement */}
-        <section className={`${pad} py-32`}>
-          <p className={`${eyebrow} mb-12`}>
-            We connect strategy with execution
-          </p>
-          <h2
-            data-scrub
-            className={h2 + " max-w-4xl text-[clamp(2.5rem,8vw,7rem)]"}
-          >
-            {words("Progress is not a buzzword.")}
-          </h2>
-          <p className="mt-10 text-2xl font-medium">
-            It is the work we deliver.
-          </p>
-          <p className="mt-6 max-w-2xl opacity-70">
-            Consulting, engineering and people-focused digital adoption — all
-            working together.
-          </p>
-        </section>
-
-        {/* Services */}
-        <section id="services" className={`${pad} py-24`}>
-          <p className={`${eyebrow} mb-6`}>01 / Capabilities</p>
-          <h2 data-lines className={`${h2} mb-16`}>
-            <L>What we do.</L>
-          </h2>
-          <div data-rows>
-            {services.map((s, i) => (
-              <div key={s} data-row>
-                <div data-rule className="h-px bg-white/25" />
-                <a
-                  href="#"
-                  className="group flex items-center gap-6 py-8 transition-colors hover:text-accent md:gap-16"
-                >
-                  <span className="text-sm opacity-60">0{i + 1}</span>
-                  <span className="flex-1 text-2xl font-semibold uppercase tracking-tight transition-transform duration-500 group-hover:translate-x-4 md:text-4xl">
-                    {s}
-                  </span>
-                  <span className="text-3xl transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1">
-                    ↗
-                  </span>
-                </a>
-              </div>
-            ))}
-            <div data-rule className="h-px bg-white/25" />
+          <div className="hero-bottom container-wide" aria-hidden="true">
+            <span>SCROLL TO EXPLORE ↓</span>
+            <span>LAGOS ↗ PARIS ↗ EVERYWHERE</span>
           </div>
         </section>
 
-        {/* Work */}
-        <section id="products" className={`${pad} py-24`}>
-          <p className={`${eyebrow} mb-6`}>02 / Work & Innovation</p>
-          <h2 data-lines className={`${h2} mb-16`}>
-            <L>Ideas made tangible.</L>
-          </h2>
-          <div className="grid items-center gap-12 md:grid-cols-[1.4fr_1fr]">
-            <div data-clip>
-              {/* <Placeholder
-                label="Attengram — product image"
-                className="aspect-[700/390]"
-              /> */}
-              <img
-                src="/images/attengram.png"
-                alt="Attengram — product image"
-                className="aspect-[700/390]"
-              />
+        <section className="statement section-dark" aria-labelledby="statement-title">
+          <div className="container-wide">
+            <p className="eyebrow muted-light">WE CONNECT STRATEGY WITH EXECUTION</p>
+            <h2 id="statement-title">Progress is not<br />a buzzword<span className="text-electric">.</span></h2>
+            <p className="statement-highlight">It is the work we deliver.</p>
+            <p className="body-copy light-copy">
+              Consulting, engineering and people-focused digital adoption — all working together.
+              We turn complex challenges into useful, lasting solutions.
+            </p>
+          </div>
+        </section>
+
+        <section id="services" className="services-section section-light" aria-labelledby="services-title">
+          <div className="container-wide">
+            <SectionLabel>01 / CAPABILITIES</SectionLabel>
+            <h2 id="services-title" className="section-title">What we do.</h2>
+            <div className="service-list">
+              {services.map((item) => (
+                <a
+                  key={item.number}
+                  className="service-row"
+                  href={"mailto:" + email + "?subject=" + encodeURIComponent(item.subject)}
+                  aria-label={"Discuss " + item.title}
+                >
+                  <span className="service-number">{item.number}</span>
+                  <span className="service-detail">
+                    <span className="service-title">{item.title}</span>
+                    <span className="service-description">{item.description}</span>
+                  </span>
+                  <Arrow className="row-arrow" />
+                </a>
+              ))}
             </div>
-            <div data-rows>
-              <p data-row className={`${eyebrow} mb-6`}>
-                Attengram / Education Technology
+          </div>
+        </section>
+
+        <section id="industries" className="industries-section section-dark" aria-labelledby="industries-title">
+          <div className="container-wide industries-layout">
+            <div>
+              <p className="eyebrow muted-light">02 / INDUSTRIES</p>
+              <h2 id="industries-title" className="section-title">Technology for real-world challenges.</h2>
+              <p className="body-copy light-copy">
+                We apply strategy and technology with an understanding of the environments
+                where people and organizations work.
               </p>
-              <h3 data-row className="text-3xl font-semibold tracking-tight">
-                From attendance to student intelligence.
-              </h3>
-              <p data-row className="mt-6 opacity-70">
-                An education analytics platform designed to turn everyday
-                academic data into meaningful insight.
+            </div>
+            <ul className="industry-list">
+              {industries.map((item, i) => (
+                <li key={item}><span>0{i + 1}</span>{item}<Arrow /></li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section id="products" className="products-section section-bluewash" aria-labelledby="products-title">
+          <div className="container-wide">
+            <SectionLabel>03 / WORK & INNOVATION</SectionLabel>
+            <h2 id="products-title" className="section-title">Ideas made tangible.</h2>
+            <div className="product-layout">
+              <div className="project-image">
+                <Image src="/images/attengram.png" alt="Digital analytics workspace illustrating the Attengram education platform" fill sizes="(max-width: 800px) 100vw, 55vw" />
+              </div>
+              <div className="product-content">
+                <p className="eyebrow text-electric">ATTENGRAM / EDUCATION TECHNOLOGY</p>
+                <h3>From attendance to student intelligence.</h3>
+                <p className="body-copy">
+                  An education technology platform helping institutions connect attendance,
+                  engagement and data-driven student success.
+                </p>
+                <a className="text-link" href="https://attengram.com/" target="_blank" rel="noopener noreferrer">
+                  EXPLORE ATTENGRAM <Arrow />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="about" className="about-section section-light" aria-labelledby="about-title">
+          <div className="container-wide about-layout">
+            <div>
+              <SectionLabel>04 / WHERE WE WORK</SectionLabel>
+              <h2 id="about-title" className="section-title">Built across borders.</h2>
+              <p className="locations">LAGOS <span>/</span> PARIS</p>
+              <p className="body-copy">Locally present. Globally minded. Helping teams move forward across markets and industries.</p>
+              <a className="text-link" href={consultationLink}>WORK WITH US <Arrow /></a>
+            </div>
+            <div className="team-image">
+              <Image src="/images/global-team.png" alt="Technology professionals collaborating in a modern workspace" fill sizes="(max-width: 800px) 100vw, 42vw" />
+            </div>
+          </div>
+        </section>
+
+        <section id="insights" className="insights-section section-bluewash" aria-labelledby="insights-title">
+          <div className="container-wide insight-layout">
+            <div>
+              <SectionLabel>05 / PERSPECTIVES</SectionLabel>
+              <h2 id="insights-title" className="section-title">Ideas worth exploring.</h2>
+            </div>
+            <div>
+              <p className="body-copy">
+                Practical thinking on responsible AI adoption, digital operations, and building
+                technology that delivers business value. Our publications are in development.
               </p>
-              <a
-                data-row
-                href="https://www.attengram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group mt-10 inline-block text-sm font-medium uppercase tracking-widest"
-              >
-                <span className="border-b border-transparent pb-1 transition-colors group-hover:border-paper">
-                  View the product
-                </span>
-                <span className="ml-2 inline-block transition-transform group-hover:-translate-y-1 group-hover:translate-x-1">
-                  ↗
-                </span>
+              <a href={"mailto:" + email + "?subject=" + encodeURIComponent("Joeveloper insights enquiry")} className="text-link">
+                GET IN TOUCH <Arrow />
               </a>
             </div>
           </div>
         </section>
 
-        {/* Global presence */}
-        <section
-          id="about"
-          className={`${pad} grid items-center gap-12 py-24 md:grid-cols-2`}
-        >
-          <div>
-            <p className={`${eyebrow} mb-6`}>03 / Where we work</p>
-            <h2 data-lines className={`${h2} mb-16`}>
-              <L>Built across borders.</L>
-            </h2>
-            <p
-              data-lines
-              className="text-[clamp(2.5rem,6vw,4.5rem)] font-semibold uppercase leading-none tracking-tight"
-            >
-              <L>Lagos / Paris</L>
-            </p>
-            <p className="mt-4 opacity-70">Locally present. Globally minded.</p>
+        <section id="contact" className="contact-section section-dark" aria-labelledby="contact-title">
+          <div className="container-wide">
+            <p className="eyebrow muted-light">READY TO MAKE PROGRESS?</p>
+            <h2 id="contact-title" className="contact-title">Let’s make<br /><span className="text-electric">it happen.</span></h2>
+            <a href={consultationLink} className="contact-button">
+              BOOK A CONSULTATION <Arrow />
+            </a>
+            <footer className="site-footer">
+              <a href="#home" className="wordmark">joeveloper<span className="trademark">®</span></a>
+              <span>LAGOS · PARIS · GLOBAL</span>
+              <a href={"mailto:" + email}>{email}</a>
+            </footer>
           </div>
-          <div data-clip>
-            <img
-              src="/images/global-team.png"
-              alt="Global team image"
-              className="aspect-[480/368]"
-            />
-          </div>
-        </section>
-
-        {/* Contact + footer */}
-        <section id="contact" className={`${pad} pt-32`}>
-          <p className={`${eyebrow} mb-10`}>Ready to make progress?</p>
-          <h2 data-lines className={big}>
-            <L>Let’s make</L>
-            <L>it happen.</L>
-          </h2>
-          <a
-            href="mailto:hello@joeveloper.com"
-            className="group mt-14 inline-flex items-center gap-3 border border-white/40 px-8 py-5 text-sm font-medium uppercase tracking-widest transition-colors duration-300 hover:bg-paper hover:text-ink"
-          >
-            Book a consultation{" "}
-            <span className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1">
-              ↗
-            </span>
-          </a>
-          <div data-rule className="mt-24 h-px bg-white/25" />
-          <footer className="flex items-center justify-between py-8">
-            <span className="text-2xl font-semibold">joeveloper®</span>
-            <span className={eyebrow}>Lagos · Paris · Global</span>
-          </footer>
         </section>
       </main>
-    </div>
+    </>
   );
 }
