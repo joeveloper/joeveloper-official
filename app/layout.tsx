@@ -1,6 +1,8 @@
 import "./globals.css";
 import { Inter_Tight } from "next/font/google";
 import type { Metadata } from "next";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 
 const font = Inter_Tight({ subsets: ["latin"], display: "swap" });
 
@@ -22,7 +24,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={font.className}>{children}</body>
+      <body className={font.className}>
+        <a href="#main" className="skip-link">Skip to content</a>
+        <SiteHeader />
+        {children}
+        <SiteFooter />
+      </body>
     </html>
   );
 }
