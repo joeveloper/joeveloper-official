@@ -56,13 +56,22 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [allowMotion, setAllowMotion] = useState(false);
   const menuRef = useRef<HTMLElement>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
   const closeButton = useRef<HTMLButtonElement>(null);
 
   const closeMenu = useCallback(() => {
     setMenuOpen(false);
-    window.requestAnimationFrame(() => menuButton.current?.focus());
+    window.requestAnimationFrame(() => menuButton.current?.focus({ preventScroll: true }));
+  }, []);
+
+  useEffect(() => {
+    const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setAllowMotion(!preference.matches);
+    updatePreference();
+    preference.addEventListener("change", updatePreference);
+    return () => preference.removeEventListener("change", updatePreference);
   }, []);
 
   useEffect(() => {
@@ -143,7 +152,7 @@ export default function Home() {
               key={item.href}
               href={item.href}
               className="menu-link"
-              onClick={closeMenu}
+              onClick={() => setMenuOpen(false)}
             >
               <span>{item.label}</span><Arrow />
             </a>
@@ -151,7 +160,7 @@ export default function Home() {
         </div>
         <div className="menu-bottom container-wide">
           <span>LAGOS / PARIS / GLOBAL</span>
-          <a href={consultationLink} onClick={closeMenu}>START A CONVERSATION <Arrow /></a>
+          <a href={consultationLink} onClick={() => setMenuOpen(false)}>START A CONVERSATION <Arrow /></a>
         </div>
       </nav>
 
@@ -166,7 +175,7 @@ export default function Home() {
             quality={85}
             className="hero-background"
           />
-          {heroVideo && !videoFailed && (
+          {heroVideo && allowMotion && !videoFailed && (
             <video
               className="hero-video"
               autoPlay
