@@ -41,3 +41,38 @@ The MENU + button opens a desktop/mobile full-screen navigation panel. Escape an
 - Review copy and metadata with the company, and verify external Attengram URL.
 
 Figma V3: https://www.figma.com/design/beKnbSu5KLvn8FqOnvE7dk?node-id=12-2
+
+
+## Milestone 2A — services architecture
+
+The site now uses a shared header and footer in \`app/layout.tsx\` and centralized service content in \`lib/services.ts\`.
+
+### Routes
+- \`/services\`: Services landing page
+- \`/services/ai-automation\`: AI & Automation
+- \`/services/digital-products-engineering\`: Digital Products & Engineering
+- \`/services/brand-web-growth\`: Brand, Web & Growth
+- \`/services/training-digital-enablement\`: Training & Digital Enablement
+
+All service detail routes use \`app/services/[slug]/page.tsx\`, \`generateStaticParams\`, and unique SEO descriptions. An unknown service slug resolves to a not-found page.
+
+### Shared components
+- \`components/layout/SiteHeader.tsx\`: responsive accessible MENU +, internal and home-section navigation
+- \`components/layout/SiteFooter.tsx\`: shared company footer
+- \`components/ui/Primitives.tsx\`: Arrow and SectionLabel components
+- \`lib/services.ts\`: service positioning, deliverables, approach, and expected outcomes
+
+Service CTAs use prefilled email enquiries for now. Replace this with a validated enquiry form or booking integration when ready.
+
+### Updating service content
+Edit \`lib/services.ts\` once: both the overview and detail pages will update. Avoid unverified impact claims, client names, case studies, or certificates.
+
+### Design references
+- [Figma Services Overview](https://www.figma.com/design/beKnbSu5KLvn8FqOnvE7dk?node-id=24-2)
+- [Figma Service Detail](https://www.figma.com/design/beKnbSu5KLvn8FqOnvE7dk?node-id=24-43)
+
+### Review checklist
+- \`npm run build\` should statically generate all four detail routes.
+- Test desktop and mobile MENU +, internal navigation from service pages, keyboard Escape/Tab controls and focus restoration.
+- Test 390px mobile, 768px tablet and 1440px desktop widths.
+- Verify consultation email delivery before publishing.
