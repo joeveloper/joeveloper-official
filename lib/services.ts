@@ -80,5 +80,5 @@ export function findService(slug: string): Service | undefined {
 }
 
 export function serviceEnquiry(subject: string): string {
-  return "mailto:hello@joeveloper.com?subject=" + encodeURIComponent(subject);
+  return "mailto:hello@joeveloper.xyz?subject=" + encodeURIComponent(subject);
 }

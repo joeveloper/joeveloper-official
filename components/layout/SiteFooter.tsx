@@ -8,7 +8,7 @@ export function SiteFooter() {
           joeveloper<span className="trademark">®</span>
         </Link>
         <span>LAGOS · PARIS · GLOBAL</span>
-        <a href="mailto:hello@joeveloper.com">hello@joeveloper.com</a>
+        <a href="mailto:hello@joeveloper.xyz">hello@joeveloper.xyz</a>
       </div>
     </footer>
   );

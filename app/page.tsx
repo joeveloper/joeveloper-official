@@ -6,7 +6,7 @@ import { services } from "@/lib/services";
 import { Arrow, SectionLabel } from "@/components/ui/Primitives";
 
 const industries = ["Public sector", "Education", "Aviation & mobility", "Growing businesses"];
-const email = "hello@joeveloper.com";
+const email = "hello@joeveloper.xyz";
 const consultationLink = "mailto:" + email + "?subject=" + encodeURIComponent("Digital transformation consultation");
 const heroVideo = process.env.NEXT_PUBLIC_HERO_VIDEO_URL;
 
@@ -65,7 +65,7 @@ export default function Home() {
             </a>
           </div>
           <div className="hero-bottom container-wide" aria-hidden="true">
-            <span>SCROLL TO EXPLORE ↓</span>
+            {/* <span>SCROLL TO EXPLORE ↓</span> */}
             <span>LAGOS ↗ PARIS ↗ EVERYWHERE</span>
           </div>
         </section>

@@ -14,7 +14,7 @@ npm run build
 
 ## Content and navigation
 
-The homepage contains working anchor destinations: Home, Services, Industries, Products (Attengram), Insights, About and Contact. All service CTAs currently start a prefilled email to `hello@joeveloper.com`; verify that mailbox is operational before launch.
+The homepage contains working anchor destinations: Home, Services, Industries, Products (Attengram), Insights, About and Contact. All service CTAs currently start a prefilled email to `hello@joeveloper.xyz`; verify that mailbox is operational before launch.
 
 **Note:** The Insights section is an honest placeholder announcing planned publications, not invented articles, and the industry list is positioning copy, not a claim of completed projects.
 
