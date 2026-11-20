@@ -1,70 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-const services = [
-  {
-    number: "01",
-    title: "AI & Automation",
-    description: "Better workflows, better decisions, and practical AI adoption.",
-    subject: "AI and automation consultation",
-  },
-  {
-    number: "02",
-    title: "Digital Products & Engineering",
-    description: "Thoughtful software, modern platforms, and connected systems.",
-    subject: "Software development consultation",
-  },
-  {
-    number: "03",
-    title: "Brand, Web & Growth",
-    description: "Digital identities and experiences that help ambitious brands grow.",
-    subject: "Digital presence and growth consultation",
-  },
-  {
-    number: "04",
-    title: "Training & Digital Enablement",
-    description: "Give teams the confidence and skills to work differently.",
-    subject: "Digital transformation training consultation",
-  },
-];
-
-const navigation = [
-  { label: "Home", href: "#home" },
-  { label: "Services", href: "#services" },
-  { label: "Industries", href: "#industries" },
-  { label: "Products", href: "#products" },
-  { label: "Insights", href: "#insights" },
-  { label: "About", href: "#about" },
-  { label: "Contact", href: "#contact" },
-];
+import { useEffect, useState } from "react";
+import { services } from "@/lib/services";
+import { Arrow, SectionLabel } from "@/components/ui/Primitives";
 
 const industries = ["Public sector", "Education", "Aviation & mobility", "Growing businesses"];
-const email = "hello@joeveloper.com";
+const email = "hello@joeveloper.xyz";
 const consultationLink = "mailto:" + email + "?subject=" + encodeURIComponent("Digital transformation consultation");
 const heroVideo = process.env.NEXT_PUBLIC_HERO_VIDEO_URL;
 
-function Arrow({ className = "" }: { className?: string }) {
-  return <span aria-hidden="true" className={className}>↗</span>;
-}
-
-function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <p className="eyebrow text-electric">{children}</p>;
-}
-
 export default function Home() {
-  const [menuOpen, setMenuOpen] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
   const [allowMotion, setAllowMotion] = useState(false);
-  const menuRef = useRef<HTMLElement>(null);
-  const menuButton = useRef<HTMLButtonElement>(null);
-  const closeButton = useRef<HTMLButtonElement>(null);
-
-  const closeMenu = useCallback(() => {
-    setMenuOpen(false);
-    window.requestAnimationFrame(() => menuButton.current?.focus({ preventScroll: true }));
-  }, []);
 
   useEffect(() => {
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -74,96 +22,7 @@ export default function Home() {
     return () => preference.removeEventListener("change", updatePreference);
   }, []);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    closeButton.current?.focus();
-
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        closeMenu();
-      }
-      if (event.key !== "Tab" || !menuRef.current) return;
-
-      const focusable = Array.from(
-        menuRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
-        ),
-      ).filter((el) => el.getClientRects().length > 0);
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    }
-
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [menuOpen, closeMenu]);
-
   return (
-    <>
-      <a href="#main" className="skip-link">Skip to content</a>
-      <header className="site-header">
-        <a className="wordmark" href="#home" aria-label="Joeveloper home">
-          joeveloper<span className="trademark">®</span>
-        </a>
-        <span className="header-caption">DIGITAL TRANSFORMATION / AI / TECHNOLOGY</span>
-        <button
-          ref={menuButton}
-          type="button"
-          className="menu-trigger"
-          aria-controls="site-menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(true)}
-        >
-          MENU <span aria-hidden="true">+</span>
-        </button>
-      </header>
-
-      <nav
-        ref={menuRef}
-        id="site-menu"
-        aria-label="Main navigation"
-        aria-hidden={!menuOpen}
-        className={menuOpen ? "menu-overlay is-open" : "menu-overlay"}
-        inert={!menuOpen}
-      >
-        <div className="menu-top container-wide">
-          <span className="wordmark">joeveloper<span className="trademark">®</span></span>
-          <span className="menu-top-label">EXPLORE</span>
-          <button ref={closeButton} type="button" className="close-trigger" onClick={closeMenu}>
-            CLOSE <span aria-hidden="true">×</span>
-          </button>
-        </div>
-        <div className="menu-content container-wide">
-          {navigation.map((item) => (
-            <a
-              key={item.href}
-              href={item.href}
-              className="menu-link"
-              onClick={() => setMenuOpen(false)}
-            >
-              <span>{item.label}</span><Arrow />
-            </a>
-          ))}
-        </div>
-        <div className="menu-bottom container-wide">
-          <span>LAGOS / PARIS / GLOBAL</span>
-          <a href={consultationLink} onClick={() => setMenuOpen(false)}>START A CONVERSATION <Arrow /></a>
-        </div>
-      </nav>
-
       <main id="main">
         <section id="home" className="hero" aria-labelledby="hero-title">
           <Image
@@ -206,7 +65,7 @@ export default function Home() {
             </a>
           </div>
           <div className="hero-bottom container-wide" aria-hidden="true">
-            <span>SCROLL TO EXPLORE ↓</span>
+            {/* <span>SCROLL TO EXPLORE ↓</span> */}
             <span>LAGOS ↗ PARIS ↗ EVERYWHERE</span>
           </div>
         </section>
@@ -232,8 +91,8 @@ export default function Home() {
                 <a
                   key={item.number}
                   className="service-row"
-                  href={"mailto:" + email + "?subject=" + encodeURIComponent(item.subject)}
-                  aria-label={"Discuss " + item.title}
+                  href={"/services/" + item.slug}
+                  aria-label={"Explore " + item.title}
                 >
                   <span className="service-number">{item.number}</span>
                   <span className="service-detail">
@@ -328,14 +187,8 @@ export default function Home() {
             <a href={consultationLink} className="contact-button">
               BOOK A CONSULTATION <Arrow />
             </a>
-            <footer className="site-footer">
-              <a href="#home" className="wordmark">joeveloper<span className="trademark">®</span></a>
-              <span>LAGOS · PARIS · GLOBAL</span>
-              <a href={"mailto:" + email}>{email}</a>
-            </footer>
-          </div>
+            </div>
         </section>
       </main>
-    </>
   );
 }
